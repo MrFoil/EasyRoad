@@ -1,3 +1,42 @@
+function breadthFirstSearch(start, destination, map) {
+    var startNode = map[start],
+        queue = [];
+
+    queue.push(start);
+    startNode.visited = true;
+
+    while (queue.length !== 0) {
+        var index = queue.splice(0, 1),
+            currentNode = map[index];
+
+        if (index[0] === destination) {
+            return reconstructPath(start, destination, map);
+        }
+
+        for (var i=0; i < currentNode.connectedTo.length; i++) {
+            if (!map[currentNode.connectedTo[i]].visited) {
+                queue.push(currentNode.connectedTo[i]);
+                map[currentNode.connectedTo[i]].visited = true;
+                map[currentNode.connectedTo[i]].previous = currentNode.index;
+            }
+        }
+    }
+
+    return false;
+}
+
+function reconstructPath(start, destination, map) {
+    var current = destination,
+        path = [];
+
+    while (current !== start) {
+        path.push(map[current].previous);
+        current = map[current].previous;
+    }
+
+    return path;
+}
+
 var pentaClusterConfig = [
     [2, 3, 4],
     [1, 5, 9],
@@ -40,6 +79,7 @@ var circleTopologyConfig = [
 var map = new Map();
 var circleTopology = new CircleTopology(circleTopologyConfig, pentaClusterConfig, 1);
 
+console.error("search: ", breadthFirstSearch(9, 18, map.list));
 
 /*map.addCluster(pentaConf);
 map.addCluster(pentaConf);

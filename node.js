@@ -1,6 +1,8 @@
 function Node(){
     this.index = generateIndex();
     this.isHeader = false;
+    this.visited = false;
+    this.previous = null;
     this.connectedTo = [];
     
 }
