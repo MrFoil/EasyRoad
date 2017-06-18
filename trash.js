@@ -4,7 +4,7 @@ function CircleTopology(topologyConfig, clusterConfig, numberOfNodes){
     this.topologyNodes = [];
 
     this.init(topologyConfig, clusterConfig);
-    this.scaleUp();
+    this.addNode();
 }
 
 CircleTopology.prototype.init = function(topologyConfig, clusterConfig){
@@ -19,7 +19,7 @@ CircleTopology.prototype.init = function(topologyConfig, clusterConfig){
     }
 };
 
-CircleTopology.prototype.scaleUp = function(){
+CircleTopology.prototype.addNode = function(){
     var me = this,
         first, second;
 

@@ -45,7 +45,22 @@ Map.prototype.getLastNode = function(){
     return this.list[keys[keys.length-1]];
 };
 
+Map.prototype.getNode = function(index){
+    return map.list[index];
+};
+
 Map.prototype.bidirectioncalConnect = function(firstNode, secondNode){
     this.list[firstNode].connectTo(secondNode);
     this.list[secondNode].connectTo(firstNode);
+};
+
+Map.prototype.resetVisited = function(){
+    var me = this,
+        keys = Object.keys(me.list);
+
+    for (var i=0; i < keys.length; i++) {
+        var key = keys[i];
+
+        map.list[key].reset();
+    }
 };

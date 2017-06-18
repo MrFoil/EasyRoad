@@ -1,4 +1,4 @@
-function breadthFirstSearch(start, destination, map) {
+function searchAlgorithm(start, destination, map) {
     var startNode = map[start],
         queue = [];
 
@@ -6,10 +6,10 @@ function breadthFirstSearch(start, destination, map) {
     startNode.visited = true;
 
     while (queue.length !== 0) {
-        var index = queue.splice(0, 1),
+        var index = queue.splice(0, 1)[0],
             currentNode = map[index];
 
-        if (index[0] === destination) {
+        if (index === destination) {
             return reconstructPath(start, destination, map);
         }
 
@@ -25,6 +25,14 @@ function breadthFirstSearch(start, destination, map) {
     return false;
 }
 
+function breadthFirstSearch(start, destination, map){
+    var result = searchAlgorithm(start, destination, map.list);
+
+    map.resetVisited();
+
+    return result;
+}
+
 function reconstructPath(start, destination, map) {
     var current = destination,
         path = [];
@@ -35,6 +43,62 @@ function reconstructPath(start, destination, map) {
     }
 
     return path;
+}
+
+function createAdjacencyMatrix(mapList) {
+    var table = {},
+        keys = Object.keys(mapList);
+
+    for (var i=0; i < keys.length; i++) {
+        var raw = {};
+
+        for (var j=0; j < keys.length; j++) {
+            raw[j] = 0;
+        }
+
+        table[i] = raw;
+    }
+
+    for (var k=0; k < keys.length; k++) {
+        var node = mapList[keys[k]];
+
+        for (var l=0; l < node.connectedTo.length; l++) {
+            table[node.index-1][node.connectedTo[l]-1] = 1;
+        }
+    }
+    console.table(table);
+
+    return table;
+}
+
+function createWeightedAdjacencyMatrix(map){
+    var table = {},
+        keys = Object.keys(map.list);
+
+    for (var i=1; i < keys.length+1; i++) {
+        var raw = {};
+
+        for (var j=1; j < keys.length+1; j++) {
+            raw[j] = 0;
+        }
+
+        table[i] = raw;
+    }
+
+    for (var k=0; k < keys.length; k++) {
+        var node = map.list[keys[k]];
+
+        for (var l=0; l < keys.length; l++) {
+            var nextNode = map.list[keys[l]],
+                path = breadthFirstSearch(node.index, nextNode.index, map),
+                distance = Array.isArray(path) ? path.length : 0;
+
+            table[node.index][nextNode.index] = distance;
+        }
+    }
+    console.table(table);
+
+    return table;
 }
 
 var pentaClusterConfig = [
@@ -50,53 +114,54 @@ var pentaClusterConfig = [
     [8, 4, 9]
 ];
 
-/*var starConfig = [
-    [2, 3, 4, 5],
-    [1, 3, 4, 5],
-    [1, 2, 4, 5],
-    [1, 2, 3, 5],
-    [1, 2, 3, 4]
+var config18 = [
+    [2, 4, 6, 3],
+    [4, 5],
+    [2, 5, 8, 1],
+    [1, 2, 6, 7],
+    [2, 7, 3, 8],
+    [1, 4, 7, 8],
+    [4, 5],
+    [7, 5, 3, 6]
 ];
 
-var trianglesConfig = [
-    [2, 5, 6],
-    [1, 3, 4],
-    [2, 4, 5],
-    [2, 3, 6],
-    [1, 6, 3],
-    [4, 1, 5]
-];*/
+var config17 = [
+    [2, 4, 3, 8],
+    [1, 3, 4, 9],
+    [1, 5, 2],
+    [1, 5, 2],
+    [3, 4, 6, 7],
+    [5, 8, 9],
+    [5, 9, 8],
+    [1, 6, 7, 9],
+    [2, 7, 6, 8]
+];
+
+var config35 = [
+    [2, 4, 8],
+    [1, 5, 7],
+    [4, 6, 8],
+    [1, 3, 5],
+    [2, 4, 6, 8],
+    [5, 3],
+    [2, 8],
+    [3, 1, 7, 5]
+];
+
 
 var circleTopologyConfig = [
-    [2, 6],
-    [1, 3],
-    [2, 4],
-    [3, 5],
-    [4, 6],
-    [5, 1]
+    [1, 2],
+    [2, 1]
+//    [2, 4]
+//    [3, 5],
+//    [4, 6],
+//    [5, 1]
 ];
 
 var map = new Map();
-var circleTopology = new CircleTopology(circleTopologyConfig, pentaClusterConfig, 1);
-
-console.error("search: ", breadthFirstSearch(9, 18, map.list));
-
-/*map.addCluster(pentaConf);
-map.addCluster(pentaConf);
-map.addCluster(pentaConf);
-map.addCluster(pentaConf);
-map.addCluster(pentaConf);
-map.addCluster(pentaConf);
-
-
-map.bidirectioncalConnect(1, 11);
-map.bidirectioncalConnect(11, 16);
-map.bidirectioncalConnect(16, 26);
-map.bidirectioncalConnect(26, 31);
-map.bidirectioncalConnect(31, 41);
-map.bidirectioncalConnect(41, 46);
-map.bidirectioncalConnect(46, 52);*/
-
-
+var circleTopology = new CircleTopology(circleTopologyConfig, config17);
 
 console.error(map, circleTopology);
+
+createAdjacencyMatrix(map.list);
+createWeightedAdjacencyMatrix(map);
