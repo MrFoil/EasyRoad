@@ -161,7 +161,7 @@ var circleTopologyConfig = [
 var map = new Map();
 var circleTopology = new CircleTopology(circleTopologyConfig, config17);
 
-console.error(map, circleTopology);
+console.error(map);
 
 createAdjacencyMatrix(map.list);
 createWeightedAdjacencyMatrix(map);
