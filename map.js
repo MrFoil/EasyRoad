@@ -1,27 +1,33 @@
 function Map(){
     this.list = {};
     this.clusterCounter = 1;
+    zeroUpIndex();
 }
 
 Map.prototype.initCluster = function(config){
     for (var i=0; i < config.length; i++) {
-        var currentNode = new Node();
+        var currentNode = new Node(),
+            headerOfCluster;
 
         for (var j=0; j < config[i].length; j++) {
             if ((i === 0) && (j === 0)) {
                 currentNode.isHeader = true;
+                headerOfCluster = currentNode.index;
             }
             currentNode.connectTo(config[i][j]);
         }
         this.list[currentNode.index] = currentNode;
     }
+
+    return headerOfCluster;
 };
 
 Map.prototype.addCluster = function(config){
-    var me = this;
+    var me = this,
+        headOfCluster;
     
     if (me.clusterCounter === 1) {
-        me.initCluster(config);
+        headOfCluster = me.initCluster(config);
     } else {
         for (var i=0; i < config.length; i++) {
             var currentNode = new Node();
@@ -29,6 +35,7 @@ Map.prototype.addCluster = function(config){
             for (var j=0; j < config[i].length; j++) {
                 if ((i === 0) && (j === 0)) {
                     currentNode.isHeader = true;
+                    headOfCluster = currentNode.index;
                 }
                 currentNode.connectTo(config[i][j] + me.getLastNode().index-i);
             }
@@ -37,6 +44,8 @@ Map.prototype.addCluster = function(config){
     }
 
     me.clusterCounter++;
+
+    return headOfCluster;
 };
 
 Map.prototype.getLastNode = function(){

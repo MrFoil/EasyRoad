@@ -49,10 +49,10 @@ function createAdjacencyMatrix(mapList) {
     var table = {},
         keys = Object.keys(mapList);
 
-    for (var i=0; i < keys.length; i++) {
+    for (var i=1; i < keys.length+1; i++) {
         var raw = {};
 
-        for (var j=0; j < keys.length; j++) {
+        for (var j=1; j < keys.length+1; j++) {
             raw[j] = 0;
         }
 
@@ -63,7 +63,7 @@ function createAdjacencyMatrix(mapList) {
         var node = mapList[keys[k]];
 
         for (var l=0; l < node.connectedTo.length; l++) {
-            table[node.index-1][node.connectedTo[l]-1] = 1;
+            table[node.index][node.connectedTo[l]] = 1;
         }
     }
     console.table(table);
@@ -158,8 +158,21 @@ var circleTopologyConfig = [
 //    [5, 1]
 ];
 
+var lineTopologyConfig = [
+    [2],
+    [1, 3],
+    [2, 4],
+    [3, 5],
+    [4, 6],
+    [5]
+];
+
 var map = new Map();
-var circleTopology = new CircleTopology(circleTopologyConfig, config17);
+//var circleTopology = new CircleTopology(circleTopologyConfig, config17, map);
+//var lineTopology = new LineTopology(lineTopologyConfig, config18, map);
+var treeTopology = new TreeTopology(config35, map);
+treeTopology.scaleUp(config35);
+treeTopology.scaleUp(config35);
 
 console.error(map);
 
