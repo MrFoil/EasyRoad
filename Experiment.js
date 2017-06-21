@@ -11,21 +11,15 @@ function Experiment(clusterConfig, topology, scales) {
     this.T = [];
 
     var circleTopologyConfig = [
-        [1, 2],
-        [2, 1],
-        [2, 4],
-        [3, 5],
-        [4, 6],
-        [5, 1]
+        [2]
+//    [2, 4]
+//    [3, 5],
+//    [4, 6],
+//    [5, 1]
     ];
 
     var lineTopologyConfig = [
-        [2],
-        [1, 3],
-        [2, 4],
-        [3, 5],
-        [4, 6],
-        [5]
+        [2]
     ];
 
     if (topology === "circle") {
@@ -36,14 +30,18 @@ function Experiment(clusterConfig, topology, scales) {
         this.topology = new TreeTopology(clusterConfig, this.map);
     }
 
-    console.error(this.map, this.scaleFactor);
+    this.S.push(this.calculateS());
+    this.D.push(this.calculateD());
+    this._D.push(this.calculate_D());
+    this.C.push(this.calculateC(0));
+    this.T.push(this.calculateT(0));
 }
 
 
 Experiment.prototype = {
     scale: function () {
-        for (var i=0; i < this.scaleFactor; i++) {
-            this.topology.scaleUp(this.clusterConfig);
+        for (var i=1; i < this.scaleFactor+1; i++) {
+            this.topology.scaleUp(this.clusterConfig, this.map);
 
             this.S.push(this.calculateS());
             this.D.push(this.calculateD());

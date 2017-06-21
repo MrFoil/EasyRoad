@@ -11,11 +11,11 @@ LineTopology.prototype.initClusters = function(topologyConfig, clusterConfig){
     this.processHeaderNodes();
 };
 
-LineTopology.prototype.scaleUp = function(clusterConfig){
+LineTopology.prototype.scaleUp = function(clusterConfig, map){
     this.map.addCluster(clusterConfig);
 
     this.storeHeaderNodes();
-    this.cleanUpHeaderConnections();
+    this.cleanUpHeaderConnections(map);
     this.interconnectHeaders();
 };
 
@@ -46,7 +46,7 @@ LineTopology.prototype.cleanUpHeaderConnections = function(){
     for (var i=0; i < me.headerNodesList.length; i++) {
         var currentHeaderNodeIndex = me.headerNodesList[i].index,
             currentHeaderNode = this.map.list[currentHeaderNodeIndex],
-            connectedHeadersList = currentHeaderNode.findHeaders();
+            connectedHeadersList = currentHeaderNode.findHeaders(this.map);
 
         for (var j=0; j < connectedHeadersList.length; j++) {
             var index = connectedHeadersList[j].index;

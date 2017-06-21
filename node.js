@@ -23,7 +23,7 @@ Node.prototype.connectTo = function(index){
     
 };
 
-Node.prototype.findHeaders = function(){
+Node.prototype.findHeaders = function(map){
     var headers = [];
 
     for (var j=0; j < this.connectedTo.length; j++) {

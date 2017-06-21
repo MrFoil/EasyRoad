@@ -77,7 +77,15 @@ console.error(map);
 createAdjacencyMatrix(map.list);
 createWeightedAdjacencyMatrix(map);*/
 
-var treeExperiment = new Experiment(config35, "tree", 3);
-treeExperiment.scale();
+//var treeExperiment = new Experiment(config35, "tree", 3);
+//treeExperiment.scale();
 
-console.error(treeExperiment);
+var lineExperiment = new Experiment(config18, "line", 1);
+//lineExperiment.scale();
+
+console.error(lineExperiment);
+
+var circleExperiment = new Experiment(config17, "circle", 1);
+//circleExperiment.scale();
+
+console.error(circleExperiment);
