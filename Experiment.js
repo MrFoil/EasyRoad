@@ -47,6 +47,9 @@ Experiment.prototype = {
 
             this.S.push(this.calculateS());
             this.D.push(this.calculateD());
+            this._D.push(this.calculate_D());
+            this.C.push(this.calculateC(i));
+            this.T.push(this.calculateT(i));
         }
     },
 
@@ -120,7 +123,7 @@ Experiment.prototype = {
                 array[k][node.connectedTo[l]] = 1;
             }
         }
-        console.table(table);
+        //console.table(table);
 
         return array;
     },
@@ -167,7 +170,7 @@ Experiment.prototype = {
                 array[k][l] = distance;
             }
         }
-        console.table(table);
+        //console.table(table);
 
         return array;
     },
@@ -216,5 +219,34 @@ Experiment.prototype = {
         }
 
         return max;
+    },
+
+    calculate_D: function(){
+        var table = this.createWeightedAdjacencyMatrix(this.map),
+            dim = table.length,
+            sum = 0;
+
+        for (var i=0; i < dim; i++) {
+            for (var j=0; j < dim; j++) {
+                sum += table[i][j];
+            }
+        }
+
+        return sum/(dim*(dim-1));
+    },
+
+    calculateC: function(index){
+        var D = this.D[index],
+            S = this.S[index],
+            n = Object.keys(this.map.list).length;
+
+        return D*n*S;
+    },
+
+    calculateT: function(index){
+        var _D = this._D[index],
+            S = this.S[index];
+
+        return (2*_D)/S;
     }
 };
