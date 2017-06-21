@@ -175,7 +175,7 @@ var lineTopologyConfig = [
     [5]
 ];
 
-var map = new Map();
+/*var map = new Map();
 //var circleTopology = new CircleTopology(circleTopologyConfig, config17, map);
 //var lineTopology = new LineTopology(lineTopologyConfig, config18, map);
 var treeTopology = new TreeTopology(config35, map);
@@ -185,4 +185,9 @@ treeTopology.scaleUp(config35);
 console.error(map);
 
 createAdjacencyMatrix(map.list);
-createWeightedAdjacencyMatrix(map);
+createWeightedAdjacencyMatrix(map);*/
+
+var treeExperiment = new Experiment(config35, "tree", 1);
+treeExperiment.scale();
+
+console.error(treeExperiment);

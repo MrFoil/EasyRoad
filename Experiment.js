@@ -2,6 +2,7 @@ function Experiment(clusterConfig, topology, scales) {
     this.scaleFactor = scales;
     this.map = new Map();
     this.topology = null;
+    this.clusterConfig = clusterConfig;
 
     this.S = [];
     this.D = [];
@@ -42,12 +43,15 @@ function Experiment(clusterConfig, topology, scales) {
 Experiment.prototype = {
     scale: function () {
         for (var i=0; i < this.scaleFactor; i++) {
+            this.topology.scaleUp(this.clusterConfig);
 
+            this.S.push(this.calculateS());
+            this.D.push(this.calculateD());
         }
     },
 
-    searchAlgorithm: function (start, destination) {
-        var startNode = this.map[start],
+    searchAlgorithm: function (start, destination, mapList) {
+        var startNode = mapList[start],
             queue = [];
 
         queue.push(start);
@@ -55,17 +59,17 @@ Experiment.prototype = {
 
         while (queue.length !== 0) {
             var index = queue.splice(0, 1)[0],
-                currentNode = this.map[index];
+                currentNode = mapList[index];
 
             if (index === destination) {
-                return reconstructPath(start, destination);
+                return this.reconstructPath(start, destination, mapList);
             }
 
             for (var i=0; i < currentNode.connectedTo.length; i++) {
-                if (!this.map[currentNode.connectedTo[i]].visited) {
+                if (!mapList[currentNode.connectedTo[i]].visited) {
                     queue.push(currentNode.connectedTo[i]);
-                    this.map[currentNode.connectedTo[i]].visited = true;
-                    this.map[currentNode.connectedTo[i]].previous = currentNode.index;
+                    mapList[currentNode.connectedTo[i]].visited = true;
+                    mapList[currentNode.connectedTo[i]].previous = currentNode.index;
                 }
             }
         }
@@ -73,45 +77,28 @@ Experiment.prototype = {
         return false;
     },
 
-    breadthFirstSearch: function(start, destination){
-        var result = searchAlgorithm(start, destination, this.map.list);
+    breadthFirstSearch: function(start, destination, map){
+        var result = this.searchAlgorithm(start, destination, map.list);
 
-        this.map.resetVisited();
+        map.resetVisited();
 
         return result;
     },
 
-    reconstructPath: function(start, destination) {
+    reconstructPath: function(start, destination, mapList) {
         var current = destination,
             path = [];
 
         while (current !== start) {
-            path.push(this.map[current].previous);
-            current = this.map[current].previous;
+            path.push(mapList[current].previous);
+            current = mapList[current].previous;
         }
 
         return path;
     },
-    
-    initArray: function(dim){
-        var arr = [];
 
-        for (var i=0; i < dim; i++) {
-            var row = [];
-
-            for (var j=0; j < dim; j++) {
-                row.push(0);
-            }
-
-            arr.push(row);
-        }
-        
-        return arr;
-    },
-
-    createAdjacencyMatrix: function() {
+    createAdjacencyMatrix: function(mapList) {
         var table = {},
-            mapList = this.map.list,
             keys = Object.keys(mapList),
             array = this.initArray(keys.length);
 
@@ -130,24 +117,33 @@ Experiment.prototype = {
 
             for (var l=0; l < node.connectedTo.length; l++) {
                 table[node.index][node.connectedTo[l]] = 1;
+                array[k][node.connectedTo[l]] = 1;
             }
         }
+        console.table(table);
 
-        for (var m=0; m < array.length; m++) {
-            for (var n=0; n < array[m].length; n++) {
-                if (ma) {
-
-                }
-            }
-        }
-        //console.table(table);
-
-        return table;
+        return array;
     },
 
-    createWeightedAdjacencyMatrix: function(){
+    initArray: function (dim) {
+        var arr = [];
+
+        for (var i=0; i < dim; i++) {
+            var temp = [];
+            for (var j=0; j < dim; j++) {
+                temp.push(0);
+            }
+
+            arr.push(temp);
+        }
+
+        return arr;
+    },
+
+    createWeightedAdjacencyMatrix: function(map){
         var table = {},
-            keys = Object.keys(this.map.list);
+            keys = Object.keys(map.list),
+            array = this.initArray(keys.length);
 
         for (var i=1; i < keys.length+1; i++) {
             var raw = {};
@@ -160,54 +156,65 @@ Experiment.prototype = {
         }
 
         for (var k=0; k < keys.length; k++) {
-            var node = this.map.list[keys[k]];
+            var node = map.list[keys[k]];
 
             for (var l=0; l < keys.length; l++) {
-                var nextNode = this.map.list[keys[l]],
-                    path = breadthFirstSearch(node.index, nextNode.index),
+                var nextNode = map.list[keys[l]],
+                    path = this.breadthFirstSearch(node.index, nextNode.index, map),
                     distance = Array.isArray(path) ? path.length : 0;
 
                 table[node.index][nextNode.index] = distance;
+                array[k][l] = distance;
             }
         }
-        //console.table(table);
+        console.table(table);
 
-        return table;
+        return array;
     },
 
     calculateS: function(){
-        var table = createAdjacencyMatrix(this.map.list),
-            rowsKeys = Object.keys(table),
+        var table = this.createAdjacencyMatrix(this.map.list),
+            dim = table.length,
             max = 0;
 
-        for (var i=0; i < rowsKeys.length; i++) {
-            var rowKey = rowsKeys[i],
-                columnsKeys = Object.keys(table[rowKey]),
-                currentValue = 0;
-
-            for (var j=0; j < columnsKeys.length; j++) {
-                var columnKey = columnsKeys[j];
-                currentValue += table[rowKey][columnKey];
+        for (var i=0; i < dim; i++) {
+            var rowSum = 0;
+            for (var j=0; j < dim; j++) {
+                rowSum += table[i][j];
             }
 
-            if (currentValue > max) {
-                max = currentValue;
+            if (rowSum > max) {
+                max = rowSum;
             }
         }
 
-        for (var i=0; i < rowsKeys.length; i++) {
-            var rowKey = rowsKeys[i],
-                columnsKeys = Object.keys(table[rowKey]),
-                currentValue = 0;
-
-            for (var j=0; j < columnsKeys.length; j++) {
-                var columnKey = columnsKeys[j];
-                currentValue += table[rowKey][columnKey];
+        for (var k=0; k < dim; k++) {
+            var columnSum = 0;
+            for (var l=0; l < dim; l++) {
+                columnSum += table[l][k];
             }
 
-            if (currentValue > max) {
-                max = currentValue;
+            if (columnSum > max) {
+                max = columnSum;
             }
         }
+
+        return max;
+    },
+
+    calculateD: function(){
+        var table = this.createWeightedAdjacencyMatrix(this.map),
+            dim = table.length,
+            max = 0;
+
+        for (var i=0; i < dim; i++) {
+            for (var j=0; j < dim; j++) {
+                if (table[i][j] > max) {
+                    max = table[i][j];
+                }
+            }
+        }
+
+        return max;
     }
-}
+};

@@ -11,7 +11,7 @@ LineTopology.prototype.initClusters = function(topologyConfig, clusterConfig){
     this.processHeaderNodes();
 };
 
-LineTopology.prototype.addNode = function(clusterConfig){
+LineTopology.prototype.scaleUp = function(clusterConfig){
     this.map.addCluster(clusterConfig);
 
     this.storeHeaderNodes();

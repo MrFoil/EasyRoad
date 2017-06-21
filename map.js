@@ -55,7 +55,7 @@ Map.prototype.getLastNode = function(){
 };
 
 Map.prototype.getNode = function(index){
-    return map.list[index];
+    return this.list[index];
 };
 
 Map.prototype.bidirectioncalConnect = function(firstNode, secondNode){
@@ -70,6 +70,6 @@ Map.prototype.resetVisited = function(){
     for (var i=0; i < keys.length; i++) {
         var key = keys[i];
 
-        map.list[key].reset();
+        me.list[key].reset();
     }
 };
