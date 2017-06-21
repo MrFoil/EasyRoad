@@ -16,3 +16,7 @@ var generateIndex = function () {
 var zeroUpIndex = function () {
     _INDEX=1;
 };
+
+function isDefined(o){
+    return typeof o !== "undefined"; 
+}

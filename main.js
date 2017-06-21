@@ -68,6 +68,14 @@ function createAdjacencyMatrix(mapList) {
     }
     console.table(table);
 
+    for (var k=0; k < keys.length; k++) {
+        var node = mapList[keys[k]];
+
+        for (var l=0; l < node.connectedTo.length; l++) {
+            table[node.index][node.connectedTo[l]] = 1;
+        }
+    }
+    
     return table;
 }
 

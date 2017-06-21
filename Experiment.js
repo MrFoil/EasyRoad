@@ -92,11 +92,28 @@ Experiment.prototype = {
 
         return path;
     },
+    
+    initArray: function(dim){
+        var arr = [];
+
+        for (var i=0; i < dim; i++) {
+            var row = [];
+
+            for (var j=0; j < dim; j++) {
+                row.push(0);
+            }
+
+            arr.push(row);
+        }
+        
+        return arr;
+    },
 
     createAdjacencyMatrix: function() {
         var table = {},
             mapList = this.map.list,
-            keys = Object.keys(mapList);
+            keys = Object.keys(mapList),
+            array = this.initArray(keys.length);
 
         for (var i=1; i < keys.length+1; i++) {
             var raw = {};
@@ -113,6 +130,14 @@ Experiment.prototype = {
 
             for (var l=0; l < node.connectedTo.length; l++) {
                 table[node.index][node.connectedTo[l]] = 1;
+            }
+        }
+
+        for (var m=0; m < array.length; m++) {
+            for (var n=0; n < array[m].length; n++) {
+                if (ma) {
+
+                }
             }
         }
         //console.table(table);
@@ -148,5 +173,41 @@ Experiment.prototype = {
         //console.table(table);
 
         return table;
+    },
+
+    calculateS: function(){
+        var table = createAdjacencyMatrix(this.map.list),
+            rowsKeys = Object.keys(table),
+            max = 0;
+
+        for (var i=0; i < rowsKeys.length; i++) {
+            var rowKey = rowsKeys[i],
+                columnsKeys = Object.keys(table[rowKey]),
+                currentValue = 0;
+
+            for (var j=0; j < columnsKeys.length; j++) {
+                var columnKey = columnsKeys[j];
+                currentValue += table[rowKey][columnKey];
+            }
+
+            if (currentValue > max) {
+                max = currentValue;
+            }
+        }
+
+        for (var i=0; i < rowsKeys.length; i++) {
+            var rowKey = rowsKeys[i],
+                columnsKeys = Object.keys(table[rowKey]),
+                currentValue = 0;
+
+            for (var j=0; j < columnsKeys.length; j++) {
+                var columnKey = columnsKeys[j];
+                currentValue += table[rowKey][columnKey];
+            }
+
+            if (currentValue > max) {
+                max = currentValue;
+            }
+        }
     }
 }
